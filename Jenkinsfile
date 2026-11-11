@@ -1,39 +1,21 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Clone-Repo') {
-	    	steps {
-	        	checkout scm
-	    	}
-        }
-	stage('Build') {
-		steps {
-			sh 'mvn install'
+	agent any 
+	stages {
+		stage('cloning stage') {
+			steps {
+				checkout scm
+			}
 		}
-	}	
- 
-	stage ('Compile'){
-	        steps {
-			sh 'mvn clean compile'
-                }
+		stage('building stage') {
+			steps {
+				sh 'mvn install'
+			}
+		}
+		stage('deploying stage') {
+			steps {
+				sh 'scp target/flipkarts.war root@172.31.34.4:/root/source-test/apache-tomcat-10.1.61/webapps'
+			} 
+		}
 	}
-
-	stage('Run Tests') {
-	    steps {
-	       sh 'mvn test'
-	    }
-	}
-
-        stage('Package as WAR') {
-            steps {
-                sh 'mvn package'
-            }
-        }
-	stage('Deployment') {
-	   steps {
-		sh 'scp target/flipkarts.war root@172.31.24.158:/root/tomcat/apache-tomcat-10.1.59/webapps'
-	}
-    }
 }
-}
+				
